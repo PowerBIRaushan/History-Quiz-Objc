@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History </title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            text-align: center;
+            padding: 2rem;
+        }
+        .quiz-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .wrong {
+            background-color: red !important;
+        }
+        .username-input, .dropdown {
+            margin: 1rem 0;
+            padding: 0.8rem;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h4>Made with ❤️ by Raushan Analyst</h4>
+    <h5>Suscribe My Youtube Channel </h5>
+     <div class="footer"> <a href="https://www.youtube.com/@Raushan_Analyst" target="_blank">Data Analyst Ind</a></div>
+    <div class="quiz-container">
+        <h1>History</h1>
+        <div id="userSection">
+            <input type="text" id="username" class="username-input" placeholder="अपना नाम दर्ज करें" onkeypress="return /^[A-Za-z ]*$/.test(event.key)">
+            
+            <button class="btn" onclick="startQuiz()">क्विज शुरू करें</button>
+        </div>
+        <div id="quizSection" style="display: none;">
+            <h2 id="welcomeMessage"></h2>
+            <p><strong>प्रतिभागी:</strong> <span id="displayUsername"></span></p>
+            <div id="quiz"></div>
+            <p id="timer">समय: 20 सेकंड</p>
+        </div>
+        <div id="resultSection" style="display: none;">
+            <h2>क्विज समाप्त</h2>
+            <p id="userScoreDisplay"></p>
+            <h3>गलत उत्तर:</h3>
+            <ul id="wrongAnswersList"></ul>
+        </div>
+    </div>
+    <div class="footer"> <a href="https://www.youtube.com/@Raushan_Analyst" target="_blank">Data Analyst Ind</a></div>
+    
+    <script>
+        let username = "";
+        const questions = [
+    { question: "भारत ने आजादी कब प्राप्त की?", options: ["1947", "1857", "1950", "1962"], correct: 0 },
+    { question: "महात्मा गांधी का पूरा नाम क्या था?", options: ["मोहनदास करमचंद गांधी", "जवाहरलाल नेहरू", "सुभाष चंद्र बोस", "भीमराव अंबेडकर"], correct: 0 },
+    { question: "1857 के विद्रोह का मुख्य कारण क्या था?", options: ["कृषि नीति", "डॉक्ट्रिन ऑफ लैप्स", "सैनिक असंतोष", "ब्रिटिश कर प्रणाली"], correct: 2 },
+    { question: "अशोक किस वंश का शासक था?", options: ["मौर्य", "गुप्त", "कुषाण", "चोल"], correct: 0 },
+    { question: "पानीपत की पहली लड़ाई कब हुई थी?", options: ["1526", "1556", "1761", "1707"], correct: 0 },
+    { question: "सुभाष चंद्र बोस ने किस सेना की स्थापना की थी?", options: ["आजाद हिंद फौज", "राष्ट्रीय सेना", "स्वतंत्र सेना", "भारतीय सेना"], correct: 0 },
+    { question: "अकबर के नवरत्नों में से कौन एक नहीं था?", options: ["बीरबल", "तानसेन", "चाणक्य", "राजा टोडरमल"], correct: 2 },
+    { question: "कुतुब मीनार किसके द्वारा बनवाई गई थी?", options: ["अकबर", "इल्तुतमिश", "कुतुबुद्दीन ऐबक", "बाबर"], correct: 2 },
+    { question: "जलियांवाला बाग हत्याकांड कब हुआ था?", options: ["1919", "1920", "1931", "1942"], correct: 0 },
+    { question: "महात्मा गांधी ने भारत में पहला सत्याग्रह कहाँ किया?", options: ["चंपारण", "अहमदाबाद", "बर्दोली", "दांडी"], correct: 0 },
+    { question: "भारतीय राष्ट्रीय कांग्रेस की स्थापना कब हुई थी?", options: ["1885", "1857", "1905", "1947"], correct: 0 },
+    { question: "भारत के पहले राष्ट्रपति कौन थे?", options: ["डॉ. राजेंद्र प्रसाद", "जवाहरलाल नेहरू", "सरदार पटेल", "बी.आर. अंबेडकर"], correct: 0 },
+    { question: "भगत सिंह, राजगुरु और सुखदेव को कब फांसी दी गई थी?", options: ["23 मार्च 1931", "15 अगस्त 1947", "26 जनवरी 1950", "2 अक्टूबर 1930"], correct: 0 },
+    { question: "अलाउद्दीन खिलजी ने किसके आक्रमण को रोका था?", options: ["मंगोल", "ब्रिटिश", "फ्रांसीसी", "डच"], correct: 0 },
+    { question: "स्वतंत्र भारत के पहले प्रधानमंत्री कौन थे?", options: ["जवाहरलाल नेहरू", "सरदार पटेल", "इंदिरा गांधी", "लाल बहादुर शास्त्री"], correct: 0 },
+    { question: "हड़प्पा सभ्यता का प्रमुख बंदरगाह कौन सा था?", options: ["लोथल", "मोहनजोदड़ो", "हड़प्पा", "कालीबंगा"], correct: 0 },
+    { question: "तृतीय बौद्ध संगीति कहाँ हुई थी?", options: ["पाटलिपुत्र", "कुशीनगर", "सारनाथ", "लुंबिनी"], correct: 0 },
+    { question: "भारतीय संविधान कब लागू हुआ?", options: ["26 जनवरी 1950", "15 अगस्त 1947", "2 अक्टूबर 1949", "26 नवंबर 1949"], correct: 0 },
+    { question: "दिल्ली सल्तनत की स्थापना किस वंश ने की?", options: ["गुलाम वंश", "खिलजी वंश", "तुगलक वंश", "लोदी वंश"], correct: 0 },
+    { question: "हुमायूंनामा किसने लिखा था?", options: ["गुलबदन बेगम", "अबुल फजल", "बाबर", "फिरदौसी"], correct: 0 }
+];
+
+        
+        let currentQuestion = 0;
+        let score = 0;
+        let wrongAnswers = [];
+        let timer;
+        
+        function startQuiz() {
+            username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                alert("कृपया अपना नाम दर्ज करें!");
+                return;
+            }
+            
+            document.getElementById('userSection').style.display = "none";
+            document.getElementById('quizSection').style.display = "block";
+            document.getElementById('displayUsername').textContent = username;
+            document.getElementById('welcomeMessage').textContent = `स्वागत है, ${username}! चलिए शुरू करें।`;
+            loadQuestion();
+        }
+        
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                endQuiz();
+                return;
+            }
+            
+            clearTimeout(timer);
+            let timeLeft = 20;
+            document.getElementById('timer').textContent = `समय: ${timeLeft} सेकंड`;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = `समय: ${timeLeft} सेकंड`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswer(-1, null);
+                }
+            }, 1000);
+            
+            const quizDiv = document.getElementById('quiz');
+            const question = questions[currentQuestion];
+            const options = ['A', 'B', 'C', 'D'];
+            quizDiv.innerHTML = `<h3>${question.question}</h3>` +
+                question.options.map((opt, i) => `<button class="btn" onclick="checkAnswer(${i}, this)">${options[i]}. ${opt}</button>`).join('');
+        }
+        
+        function checkAnswer(selected, btn) {
+            clearInterval(timer);
+            if (selected === questions[currentQuestion].correct) {
+                score++;
+            } else {
+                if (btn) btn.classList.add('wrong');
+                wrongAnswers.push({
+                    question: questions[currentQuestion].question,
+                    correctAnswer: questions[currentQuestion].options[questions[currentQuestion].correct]
+                });
+            }
+            
+            currentQuestion++;
+            setTimeout(loadQuestion, 1000);
+        }
+        
+        function endQuiz() {
+            document.getElementById('quizSection').style.display = "none";
+            document.getElementById('resultSection').style.display = "block";
+            document.getElementById('userScoreDisplay').textContent = `${username}, आपका स्कोर: ${score}/${questions.length}`;
+            document.getElementById('wrongAnswersList').innerHTML = wrongAnswers.map(item => `<li>${item.question} - सही उत्तर: ${item.correctAnswer}</li>`).join('');
+        }
+    </script>
+</body>
+</html>
